@@ -76,30 +76,23 @@
     summary { cursor: pointer; color: var(--brand-dark); font-weight: 650; }
     pre { max-height: 500px; overflow: auto; padding: 16px; white-space: pre-wrap; word-break: break-word;
       color: #dbe7ff; background: #101a2d; border-radius: 9px; font: 13px/1.5 ui-monospace, monospace; }
-    .guide { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-    .guide .panel, .analysis-panel { padding: 20px; }
+    .example { margin: 12px 0 0; padding: 12px; color: #20345c; background: #f1f5ff; border-radius: 8px; }
     .steps { counter-reset: step; padding: 0; list-style: none; }
     .steps li { counter-increment: step; position: relative; padding: 0 0 16px 42px; }
     .steps li::before { content: counter(step); position: absolute; left: 0; width: 28px; height: 28px;
       color: white; background: var(--brand); border-radius: 50%; text-align: center; line-height: 28px; font-weight: 700; }
-    .analysis-grid { display: grid; grid-template-columns: 260px 1fr; gap: 16px; }
-    .analysis-panel { margin-bottom: 16px; }
-    .form-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-    label { display: block; color: var(--muted); font-weight: 650; }
-    label input, label select, label textarea { margin-top: 5px; }
-    textarea { min-height: 92px; resize: vertical; }
     .empty { padding: 30px; color: var(--muted); text-align: center; }
     .status { color: var(--muted); font-size: .9rem; }
     footer { padding: 24px 20px; color: var(--muted); text-align: center; }
     @media (max-width: 850px) {
-      .hero, .layout, .analysis-grid { grid-template-columns: 1fr; }
+      .hero, .layout { grid-template-columns: 1fr; }
       .sidebar { position: static; max-height: none; }
       .toc { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
     }
     @media (max-width: 560px) {
       .topbar { padding: 12px; } main { padding: 16px 12px 50px; }
       .hero-card, .class-body, .family-body, .analysis-panel { padding: 15px; }
-      .stats, .guide, .form-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: 1fr; }
       .topbar-inner { align-items: flex-start; flex-direction: column; }
       nav { width: 100%; } nav button { flex: 1; }
     }
@@ -111,8 +104,6 @@
       <div class="brand">Common Criteria <small>Catálogo para análisis de casos · CC:2022 Parte 2</small></div>
       <nav aria-label="Secciones">
         <button class="active" data-tab="catalogo">Catálogo</button>
-        <button data-tab="guia">Guía de análisis</button>
-        <button data-tab="notas">Mis notas</button>
       </nav>
     </div>
   </header>
@@ -120,16 +111,16 @@
     <section class="hero">
       <div class="hero-card">
         <h1>Encuentra qué falló en el sistema</h1>
-        <p>Consulta las clases, familias, componentes, elementos, dependencias y operaciones del catálogo de requisitos funcionales de seguridad. El texto normativo corresponde al PDF oficial <strong>Common Criteria for Information Technology Security Evaluation — Part 2: Security functional components, CC:2022 Revision 1</strong>; la navegación y las ayudas están en español.</p>
+        <p>Consulta el catálogo de requisitos funcionales de seguridad de Common Criteria. Cada nivel conserva su nombre en inglés y español, una explicación conceptual en español y ejemplos prácticos para entender cómo se relacionan sus elementos.</p>
         <div class="stats"><div class="stat"><strong id="classCount">—</strong> clases</div><div class="stat"><strong id="familyCount">—</strong> familias</div><div class="stat"><strong id="componentCount">—</strong> componentes</div></div>
       </div>
       <div class="panel" style="padding:22px">
-        <h2>Cómo usarlo</h2>
+        <h2>Cómo explorar el catálogo</h2>
         <ol class="steps">
           <li>Busca un código o palabra clave del caso.</li>
-          <li>Abre la familia y revisa sus componentes y dependencias.</li>
-          <li>Compara el elemento numerado con la evidencia del escenario.</li>
-          <li>Registra la hipótesis y el faltante en “Mis notas”.</li>
+          <li>Abre una familia y revisa sus componentes.</li>
+          <li>Lee los elementos numerados y el ejemplo de aplicación.</li>
+          <li>Usa el código para relacionar el concepto con tu caso.</li>
         </ol>
       </div>
     </section>
@@ -146,63 +137,78 @@
         <div id="catalog"></div>
       </div>
     </section>
-    <section id="guia" class="tab" hidden>
-      <div class="guide">
-        <article class="panel"><h2>Lectura rápida del estándar</h2>
-          <p><strong>Clase → familia → componente → elemento.</strong> La clase agrupa un objetivo amplio; la familia organiza un tema concreto; el componente es un requisito seleccionable; y cada elemento numerado (por ejemplo, <code>FIA_AFL.1.1</code>) expresa una parte verificable.</p>
-          <p><strong>Dependencias:</strong> si el componente A depende de B, una implementación de A debe considerar también B o una alternativa jerárquicamente válida. No confundas una dependencia con evidencia de que el sistema realmente la implementa.</p>
-          <p><strong>Operaciones:</strong> <em>assignment</em>, <em>selection</em>, <em>refinement</em> e <em>iteration</em> son espacios que deben concretarse en el perfil, paquete o ST. Un espacio sin resolver puede ser el hallazgo.</p>
-        </article>
-        <article class="panel"><h2>Método para el caso de estudio</h2>
-          <ol class="steps">
-            <li><strong>Delimita el activo y el límite:</strong> identifica TOE, TSF, usuarios, interfaces y datos afectados.</li>
-            <li><strong>Describe el evento observable:</strong> qué ocurrió, cuándo, quién lo ejecutó y cuál fue el resultado.</li>
-            <li><strong>Mapea a SFR:</strong> localiza el código más específico y baja hasta el elemento numerado.</li>
-            <li><strong>Contrasta implementación:</strong> separa “no existe”, “existe pero está mal configurado”, “falló” y “no hay evidencia”.</li>
-            <li><strong>Revisa dependencias y auditoría:</strong> una conclusión sólida indica qué requisito relacionado también queda comprometido.</li>
-            <li><strong>Concluye:</strong> redacta causa, impacto, evidencia faltante y control/requisito que lo habría prevenido o detectado.</li>
-          </ol>
-        </article>
-        <article class="panel"><h2>Plantilla mental de respuesta</h2>
-          <p><strong>Hecho:</strong> “El sistema permitió/omitió ___”.</p>
-          <p><strong>Requisito:</strong> “Corresponde a <code>XXX_YYY.n.m</code> porque exige ___”.</p>
-          <p><strong>Brecha:</strong> “No se implementó / se implementó parcialmente / falló ___”.</p>
-          <p><strong>Prueba:</strong> “La evidencia sería ___; si no existe, la confianza queda limitada”.</p>
-          <p><strong>Relación:</strong> “También revisar ___ por dependencia, identidad, registro, tiempo o gestión”.</p>
-        </article>
-        <article class="panel"><h2>Advertencias de examen</h2>
-          <ul>
-            <li>Una alarma o un log no evita por sí mismo el incidente: distingue prevención, detección, respuesta y recuperación.</li>
-            <li>“Usuario autenticado” no significa necesariamente “autorizado para esa operación”.</li>
-            <li>Una dependencia satisfecha no prueba que el requisito principal esté correctamente aplicado.</li>
-            <li>Si el enunciado no permite afirmar algo, marca “evidencia insuficiente” en lugar de inventar una configuración.</li>
-          </ul>
-        </article>
-      </div>
-    </section>
-    <section id="notas" class="tab" hidden>
-      <div class="analysis-grid">
-        <aside class="panel analysis-panel"><h2>Registro</h2>
-          <p class="status">Las notas se guardan en este dispositivo mediante localStorage.</p>
-          <label>Filtrar notas <input id="noteSearch" type="search" placeholder="Código o palabra…"></label>
-          <div class="toolbar"><button class="button primary" id="newNote">Nueva nota</button><button class="button" id="exportNotes">Exportar JSON</button></div>
-          <div id="noteList"></div>
-        </aside>
-        <div id="noteEditor" class="panel analysis-panel"><div class="empty">Selecciona “Nueva nota” o una nota existente.</div></div>
-      </div>
-    </section>
   </main>
   <footer>Herramienta de estudio personal · Referencia normativa: Common Criteria CC:2022, Part 2, Revision 1.</footer>
   <script>
     const classNames = {
-      FAU: "Auditoría de seguridad", FCO: "Comunicación", FCS: "Soporte criptográfico",
-      FDP: "Protección de los datos del usuario", FIA: "Identificación y autenticación",
-      FMT: "Gestión de la seguridad", FPR: "Privacidad", FPT: "Protección de la TSF",
-      FRU: "Utilización de recursos", FTA: "Acceso al TOE", FTP: "Ruta/canales confiables"
+      FAU: ["Security audit", "Auditoría de seguridad"], FCO: ["Communication", "Comunicación"],
+      FCS: ["Cryptographic support", "Soporte criptográfico"], FDP: ["User data protection", "Protección de datos del usuario"],
+      FIA: ["Identification and authentication", "Identificación y autenticación"], FMT: ["Security management", "Gestión de la seguridad"],
+      FPR: ["Privacy", "Privacidad"], FPT: ["Protection of the TSF", "Protección de la TSF"],
+      FRU: ["Resource utilization", "Utilización de recursos"], FTA: ["TOE access", "Acceso al TOE"],
+      FTP: ["Trusted path/channels", "Ruta/canales confiables"]
     };
-    const state = { classes: [], notes: JSON.parse(localStorage.getItem("cc-notes") || "[]"), activeNote: null };
+    const state = { classes: [] };
     const esc = value => String(value || "").replace(/[&<>"']/g, c => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" }[c]));
     const linesOf = (text, start, end) => text.slice(start, end).split(/\r?\n/);
+    const translations = { security:"seguridad", audit:"auditoría", data:"datos", user:"usuario", protection:"protección", identification:"identificación", authentication:"autenticación", management:"gestión", privacy:"privacidad", cryptographic:"criptográfico", support:"soporte", communication:"comunicación", resource:"recursos", utilization:"utilización", access:"acceso", trusted:"confiable", path:"ruta", channels:"canales", generation:"generación", review:"revisión", analysis:"análisis", response:"respuesta", automatic:"automática", control:"control", information:"información", confidentiality:"confidencialidad", integrity:"integridad", availability:"disponibilidad", proof:"prueba", origin:"origen", receipt:"recepción", identity:"identidad", authorization:"autorización", role:"rol", time:"tiempo", monitoring:"supervisión", action:"acción", actions:"acciones", failure:"fallo", detection:"detección", attack:"ataque", attacks:"ataques", incident:"incidente", storage:"almacenamiento", stored:"almacenado", transfer:"transferencia", exchange:"intercambio", policy:"política", policies:"políticas", function:"función", functions:"funciones", limited:"limitado", capability:"capacidad", capabilities:"capacidades", required:"requerido", event:"evento", events:"eventos", record:"registro", records:"registros" };
+    function spanishTitle(title) {
+      return title.replace(/\bSecurity audit automatic response\b/i, "Respuesta automática de auditoría de seguridad")
+        .replace(/\bSecurity audit data generation\b/i, "Generación de datos de auditoría de seguridad")
+        .replace(/\bSecurity audit analysis\b/i, "Análisis de auditoría de seguridad")
+        .replace(/\bSecurity audit review\b/i, "Revisión de auditoría de seguridad")
+        .replace(/\balarms?\b/gi, "alarmas").replace(/\blist\b/gi, "lista")
+        .replace(/\bpotential\b/gi, "potencial").replace(/\bviolation\b/gi, "infracción")
+        .replace(/\bupon\b/gi, "al producirse").replace(/\btake\b/gi, "tomar")
+        .replace(/\bdetected\b/gi, "detectada").replace(/\bdetection\b/gi, "detección")
+        .replace(/\bprovided\b/gi, "proporcionada").replace(/\bprovide\b/gi, "proporcionar")
+        .replace(/\bcontrol\b/gi, "control").replace(/[A-Za-z]+/g, word => translations[word.toLowerCase()] || word);
+    }
+    function concept(title, kind) {
+      const translated = spanishTitle(title).toLowerCase();
+      return kind === "family"
+        ? `Organiza requisitos relacionados con ${translated}, para definir qué debe protegerse y cómo comprobarlo.`
+        : `Establece una capacidad de ${translated} que el sistema debe ofrecer y que puede verificarse mediante sus elementos.`;
+    }
+    const classDescriptions = {
+      FAU: "Reúne controles para saber qué acciones importantes ocurrieron, quién las realizó y qué hacer cuando se detecta una situación sospechosa.",
+      FCO: "Reúne controles para demostrar quién envió una información y quién la recibió, evitando que una de las partes pueda negar el intercambio.",
+      FCS: "Reúne controles para proteger información mediante técnicas criptográficas, como cifrado, firmas y administración segura de claves.",
+      FDP: "Reúne controles para decidir quién puede usar los datos, qué puede hacer con ellos y cómo se evita que sean alterados o divulgados.",
+      FIA: "Reúne controles para reconocer a una persona o entidad y comprobar que realmente es quien dice ser antes de permitirle actuar.",
+      FMT: "Reúne controles para administrar configuraciones, permisos, reglas y responsabilidades de seguridad durante la vida del producto.",
+      FPR: "Reúne controles para proteger la privacidad de las personas y limitar el uso, la observación o la relación indebida de sus datos.",
+      FPT: "Reúne controles para proteger los mecanismos internos de seguridad del producto, sus configuraciones y la información que usa para hacer cumplir las reglas.",
+      FRU: "Reúne controles para asegurar que el producto tenga recursos suficientes y que un uso excesivo no afecte su disponibilidad.",
+      FTA: "Reúne controles para decidir cómo se inicia, limita y termina el acceso de una persona al producto.",
+      FTP: "Reúne controles para que las personas puedan comunicarse con el producto por un canal confiable y distinguir una respuesta auténtica de una suplantación."
+    };
+    const realExamples = {
+      FAU: "En una clínica, el responsable revisa quién consultó una historia médica, conserva ese registro y recibe una alerta si alguien intenta acceder fuera de su horario.",
+      FCO: "En una compraventa de una casa, ambas partes reciben un comprobante firmado que permite demostrar quién envió y quién aceptó cada documento.",
+      FCS: "En una tienda en línea, los datos de una tarjeta viajan protegidos y solo las personas autorizadas pueden recuperar las claves necesarias para procesar el pago.",
+      FDP: "En una escuela, un profesor puede consultar las calificaciones de su grupo, pero no modificar las de otro profesor ni ver información médica de los alumnos.",
+      FIA: "En un banco, una persona presenta su tarjeta y un segundo factor; el banco comprueba ambos antes de permitir una transferencia.",
+      FMT: "En una empresa, solo el administrador designado puede cambiar las reglas de acceso y cada cambio queda asociado a su responsable y fecha.",
+      FPR: "En una aplicación de transporte, la ubicación de una persona se usa solo durante el viaje, no se muestra públicamente y se elimina cuando deja de ser necesaria.",
+      FPT: "En un hospital, las reglas que protegen los equipos no pueden ser desactivadas por un usuario común y cualquier intento de alterarlas queda registrado.",
+      FRU: "En una plataforma de matrículas, el servicio reserva capacidad para los trámites y evita que una avalancha de solicitudes deje sin atención a todos los usuarios.",
+      FTA: "En una biblioteca, una persona puede iniciar sesión, queda bloqueada tras varios intentos fallidos y su sesión se cierra después de un periodo sin actividad.",
+      FTP: "En una oficina, el personal verifica que el mensaje de aprobación provenga del servidor oficial antes de introducir información confidencial."
+    };
+    function elementDescription(code, text) {
+      const lower = text.toLowerCase();
+      if (/audit|auditable|record|event|violation|alarm/.test(lower)) return `Este elemento indica qué actividad de seguridad debe registrarse, revisarse o generar una alerta, y qué información debe conservarse para entender lo ocurrido.`;
+      if (/identif|authent|user identity|password|credential/.test(lower)) return `Este elemento indica cómo se debe reconocer a la persona y comprobar su identidad antes de permitirle realizar una acción.`;
+      if (/access|subject|object|operation|security attribute|authori/.test(lower)) return `Este elemento indica qué personas pueden realizar una acción sobre un dato o recurso y bajo qué condiciones debe permitirse o rechazarse.`;
+      if (/encrypt|cryptograph|key|signature|hash|confidential/.test(lower)) return `Este elemento indica cómo se debe proteger la información con criptografía, cómo se administran las claves y cómo se comprueba que el contenido sea auténtico.`;
+      if (/integrity|modify|alter|stored data/.test(lower)) return `Este elemento indica cómo se debe impedir o detectar que la información sea modificada sin autorización y cómo responder cuando se detecta un cambio.`;
+      if (/privacy|personal|anonym|pseudonym|unlink/.test(lower)) return `Este elemento indica cómo se debe limitar la identificación, el seguimiento o el uso de datos personales, según la finalidad autorizada.`;
+      if (/availability|resource|capacity|priority|denial|failure/.test(lower)) return `Este elemento indica cómo se deben reservar, controlar o recuperar los recursos para que el servicio siga disponible cuando aumenta la demanda o ocurre un fallo.`;
+      if (/trusted|channel|path|communicat|origin|receipt|non-repudi/.test(lower)) return `Este elemento indica cómo se debe asegurar que una comunicación llegue por el canal correcto y que pueda demostrarse quién la envió o recibió.`;
+      if (/manage|role|administr|configuration|security function/.test(lower)) return `Este elemento indica quién puede administrar una regla o configuración de seguridad y qué límites debe respetar esa responsabilidad.`;
+      return `Este elemento indica una condición de seguridad que debe cumplirse, conservar evidencia y poder comprobarse en la práctica.`;
+    }
     function parseSource(text) {
       const start = text.lastIndexOf("8 Class FAU: Security audit");
       const end = text.indexOf("Annex A", start);
@@ -232,7 +238,7 @@
       }
       classes.forEach(c => c.families.forEach(f => {
         f.raw = f.lines.join("\n").trim();
-        f.summary = (f.lines.slice(0, 8).join(" ").replace(/\s+/g, " ").slice(0, 420));
+        f.summary = concept(f.title, "family");
         const source = f.lines.join("\n");
         const elementPattern = /^([A-Z]{3}_[A-Z]{3}\.\d+\.\d+)\s*$/gm;
         const elementMatches = [...source.matchAll(elementPattern)];
@@ -245,7 +251,7 @@
           const componentCode = elementCode.slice(0, elementCode.lastIndexOf("."));
           let component = componentsByCode.get(componentCode);
           if (!component) component = { code: componentCode, title: "Componente " + componentCode, elements: [] };
-          component.elements.push({ code: elementCode, text: body });
+          component.elements.push({ code: elementCode, text: elementDescription(elementCode, body) });
           componentsByCode.set(componentCode, component);
         });
         componentsByCode.forEach(component => {
@@ -265,42 +271,23 @@
         (!q || JSON.stringify(c).toLowerCase().includes(q)));
       catalog.innerHTML = visible.length ? visible.map(c => {
         const fams = c.families.filter(f => !q || JSON.stringify(f).toLowerCase().includes(q));
-        return `<article class="class-card" id="class-${c.code}"><div class="class-head"><h2>Clase ${c.code}: ${esc(classNames[c.code] || c.title)}</h2><small>Título oficial en el PDF: ${esc(c.title)} · ${fams.length} familias visibles</small></div><div class="class-body">${fams.map(f => `<section class="family-card"><div class="family-head"><h3><span class="badge">${f.code}</span> ${esc(f.title)}</h3><button class="button" data-note-code="${f.code}">Analizar familia</button></div><div class="family-body"><p class="family-summary">${esc(f.summary)}</p><h4>Componentes de la familia</h4><div class="component-grid">${f.components.map(x => `<details class="component-card"><summary><strong>${esc(x.code)}</strong><span>Nombre oficial en el PDF: ${esc(x.title)}</span></summary><div class="elements"><h4>Elementos del componente</h4>${x.elements.map(e => `<p><span class="badge">${esc(e.code)}</span> ${esc(e.text)}</p>`).join("")}</div></details>`).join("")}</div><details><summary>Ver texto oficial completo de la familia</summary><pre>${esc(f.raw)}</pre></details></div></section>`).join("")}</div></article>`;
+        return `<article class="class-card" id="class-${c.code}"><div class="class-head"><h2>Clase ${c.code}: ${esc(c.nameEs)}</h2><small>English: ${esc(c.nameEn)} · ${fams.length} familias visibles</small></div><div class="class-body"><p class="family-summary">${esc(c.desc)}</p>${fams.map(f => `<section class="family-card"><div class="family-head"><h3><span class="badge">${f.code}</span> ${esc(f.nameEs)}</h3><small>English: ${esc(f.nameEn)}</small></div><div class="family-body"><p class="family-summary">${esc(f.desc)}</p><h4>Componentes de la familia</h4><div class="component-grid">${f.components.map(x => `<details class="component-card"><summary><strong>${esc(x.code)}</strong><span>${esc(x.nameEs)}<br><small>English: ${esc(x.nameEn)}</small></span></summary><div class="elements"><h4>Elementos del componente</h4>${x.elements.map(e => `<p>${esc(e)}</p>`).join("")}<p class="example"><strong>Ejemplo:</strong> ${esc(x.example)}</p></div></details>`).join("")}</div></div></section>`).join("")}</div></article>`;
       }).join("") : '<div class="panel empty">No hay resultados. Prueba con un código como FIA_AFL o una palabra del caso.</div>';
-      document.querySelectorAll("[data-note-code]").forEach(b => b.onclick = () => createNote(b.dataset.noteCode));
-      document.querySelector("#toc").innerHTML = state.classes.map(c => `<button data-target="class-${c.code}"><strong>${c.code}</strong> · ${esc(classNames[c.code] || c.title)}</button>`).join("");
+      document.querySelector("#toc").innerHTML = state.classes.map(c => `<button data-target="class-${c.code}"><strong>${c.code}</strong> · ${esc(c.nameEs)}</button>`).join("");
       document.querySelectorAll("[data-target]").forEach(b => b.onclick = () => document.getElementById(b.dataset.target)?.scrollIntoView());
     }
     function setupCatalog(text) {
-      state.classes = parseSource(text);
+      state.classes = typeof text === "string" ? JSON.parse(text) : text;
       document.querySelector("#classCount").textContent = state.classes.length;
       document.querySelector("#familyCount").textContent = state.classes.reduce((n, c) => n + c.families.length, 0);
       document.querySelector("#componentCount").textContent = state.classes.reduce((n, c) => n + c.families.reduce((m, f) => m + f.components.length, 0), 0);
-      document.querySelector("#classFilter").innerHTML += state.classes.map(c => `<option value="${c.code}">${c.code} · ${esc(classNames[c.code] || c.title)}</option>`).join("");
+      document.querySelector("#classFilter").innerHTML += state.classes.map(c => `<option value="${c.code}">${c.code} · ${esc(c.nameEs)}</option>`).join("");
       document.querySelector("#search").oninput = render; document.querySelector("#classFilter").onchange = render;
       document.querySelector("#expandAll").onclick = () => document.querySelectorAll("details").forEach(x => x.open = true);
       document.querySelector("#collapseAll").onclick = () => document.querySelectorAll("details").forEach(x => x.open = false);
       render();
     }
-    function saveNotes() { localStorage.setItem("cc-notes", JSON.stringify(state.notes)); renderNotes(); }
-    function createNote(code = "") { const note = { id: Date.now(), code, hecho:"", requisito:"", brecha:"", evidencia:"", impacto:"", estado:"Por analizar" }; state.notes.unshift(note); state.activeNote = note.id; saveNotes(); renderEditor(); document.querySelector("[data-tab=notas]").click(); }
-    function renderNotes() {
-      const q = (document.querySelector("#noteSearch")?.value || "").toLowerCase();
-      document.querySelector("#noteList").innerHTML = state.notes.filter(n => JSON.stringify(n).toLowerCase().includes(q)).map(n => `<button class="toc button" style="margin:6px 0" data-note="${n.id}"><strong>${esc(n.code || "Sin código")}</strong><br><span>${esc(n.hecho || "Nueva hipótesis")}</span></button>`).join("") || '<p class="status">Aún no hay notas.</p>';
-      document.querySelectorAll("[data-note]").forEach(b => b.onclick = () => { state.activeNote = Number(b.dataset.note); renderEditor(); });
-    }
-    function renderEditor() {
-      const n = state.notes.find(x => x.id === state.activeNote); if (!n) return;
-      document.querySelector("#noteEditor").innerHTML = `<h2>Análisis del caso</h2><p class="status">Usa una nota por hallazgo o por requisito.</p><div class="form-grid"><label>Código CC<input data-field="code" value="${esc(n.code)}" placeholder="Ej. FIA_AFL.1.1"></label><label>Estado<select data-field="estado"><option ${n.estado==="Por analizar"?"selected":""}>Por analizar</option><option ${n.estado==="No implementado"?"selected":""}>No implementado</option><option ${n.estado==="Falló"?"selected":""}>Falló</option><option ${n.estado==="Parcial"?"selected":""}>Implementación parcial</option><option ${n.estado==="Evidencia insuficiente"?"selected":""}>Evidencia insuficiente</option></select></label><label style="grid-column:1/-1">¿Qué ocurrió?<textarea data-field="hecho">${esc(n.hecho)}</textarea></label><label>Requisito/elemento esperado<textarea data-field="requisito">${esc(n.requisito)}</textarea></label><label>Brecha encontrada<textarea data-field="brecha">${esc(n.brecha)}</textarea></label><label>Evidencia disponible<textarea data-field="evidencia">${esc(n.evidencia)}</textarea></label><label>Impacto y dependencias<textarea data-field="impacto">${esc(n.impacto)}</textarea></label></div><div class="toolbar"><button class="button primary" id="saveNote">Guardar</button><button class="button" id="deleteNote">Eliminar</button></div>`;
-      document.querySelectorAll("[data-field]").forEach(el => el.oninput = () => n[el.dataset.field] = el.value);
-      document.querySelector("#saveNote").onclick = saveNotes;
-      document.querySelector("#deleteNote").onclick = () => { state.notes = state.notes.filter(x => x.id !== n.id); state.activeNote = null; saveNotes(); document.querySelector("#noteEditor").innerHTML = '<div class="empty">Nota eliminada.</div>'; };
-    }
-    document.querySelectorAll("nav button").forEach(b => b.onclick = () => { document.querySelectorAll(".tab").forEach(t => t.hidden = t.id !== b.dataset.tab); document.querySelectorAll("nav button").forEach(x => x.classList.toggle("active", x === b)); if (b.dataset.tab === "notas") { renderNotes(); renderEditor(); } });
-    document.querySelector("#newNote").onclick = () => createNote();
-    document.querySelector("#noteSearch").oninput = renderNotes;
-    document.querySelector("#exportNotes").onclick = () => { const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([JSON.stringify(state.notes, null, 2)], {type:"application/json"})); a.download = "mis-notas-common-criteria.json"; a.click(); };
-    fetch("resultado.md").then(r => { if (!r.ok) throw new Error("No se encontró el archivo de datos del catálogo"); return r.text(); }).then(setupCatalog).catch(e => { document.querySelector("#catalog").innerHTML = `<div class="panel empty"><strong>No se pudo cargar el catálogo.</strong><br>${esc(e.message)}<br><br>Coloca el HTML y el archivo de datos juntos y abre el sitio mediante un servidor local o GitHub Pages.</div>`; });
+    fetch("catalogo.json").then(r => { if (!r.ok) throw new Error("No se encontró el archivo de datos del catálogo"); return r.json(); }).then(setupCatalog).catch(e => { document.querySelector("#catalog").innerHTML = `<div class="panel empty"><strong>No se pudo cargar el catálogo.</strong><br>${esc(e.message)}<br><br>Coloca el HTML y el archivo de datos juntos y abre el sitio mediante un servidor local o GitHub Pages.</div>`; });
   </script>
 </body>
 </html>
